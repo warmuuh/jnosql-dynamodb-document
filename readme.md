@@ -18,7 +18,6 @@ You can use either the Maven or Gradle dependencies:
 if you use sso for AWS authentication, you need to include sso as well:
 
 ```xml
-
 <dependency>
   <groupId>software.amazon.awssdk</groupId>
   <artifactId>sso</artifactId>
@@ -31,17 +30,17 @@ if you use sso for AWS authentication, you need to include sso as well:
 This API provides the ```DynamoDBConfigurations``` class to programmatically establish the credentials.
 Please note that you can establish properties using the [MicroProfile Config](https://microprofile.io/microprofile-config/) specification.
 
-| Configuration property         | Description                                                                      |
-|--------------------------------|----------------------------------------------------------------------------------|
-| `jnosql.dynamodb.endpoint`     | DynamoDB’s URL                                                                   |
-| `jnosql.dynamodb.region`       | Configure the region with which the application should communicate.              |
-| `jnosql.dynamodb.profile`      | Define the name of the profile that should be used by this credentials provider. |
-| `jnosql.dynamodb.awsaccesskey` | The AWS access key, used to identify the user interacting with AWS.              |
-| `jnosql.dynamodb.secretaccess` | The AWS secret access key, used to authenticate the user interacting with AWS.   |
+| Configuration property         | Description                                                                      | Required    |
+|--------------------------------|----------------------------------------------------------------------------------|-------------|
+| `jnosql.dynamodb.endpoint`     | DynamoDB’s URL                                                                   | no          |
+| `jnosql.dynamodb.region`       | Configure the region with which the application should communicate.              | yes         |
+| `jnosql.dynamodb.profile`      | Define the name of the profile that should be used by this credentials provider. | no          |
+| `jnosql.dynamodb.awsaccesskey` | The AWS access key, used to identify the user interacting with AWS.              | no (if sso) |
+| `jnosql.dynamodb.secretaccess` | The AWS secret access key, used to authenticate the user interacting with AWS.   | no (if sso) |
 
 ## Example
 
-This is an example using DynamoDB's Key-Value API with MicroProfile Config.
+This is an example using DynamoDB's Document API with MicroProfile Config.
 
 [source,properties]
 ----
