@@ -14,9 +14,9 @@ import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 
 @UtilityClass
-public class QueryMapper {
+public class DynamoDbConditionMapper {
 
-  Map<String, Condition> getKeyFromSelect(DocumentCondition documentCondition) {
+  Map<String, Condition> mapCondition(DocumentCondition documentCondition) {
 
     Document document = documentCondition.document();
     org.eclipse.jnosql.communication.Condition condition = documentCondition.condition();
@@ -56,7 +56,7 @@ public class QueryMapper {
           .build());
       case AND ->
           document.get(new TypeReference<List<DocumentCondition>>() {})
-              .stream().map(QueryMapper::getKeyFromSelect).forEach(result::putAll);
+              .stream().map(DynamoDbConditionMapper::mapCondition).forEach(result::putAll);
       case NOT ->
           result.put(document.name(), Condition.builder()
           .comparisonOperator(ComparisonOperator.NE)
