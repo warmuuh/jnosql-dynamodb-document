@@ -3,6 +3,7 @@ package com.github.warmuuh.jnosql.dynamodb.util;
 import java.util.function.Function;
 
 public class WithIndex<T> {
+
   private int index;
   private T value;
 
@@ -26,7 +27,8 @@ public class WithIndex<T> {
 
   public static <T> Function<T, WithIndex<T>> indexed() {
     return new Function<T, WithIndex<T>>() {
-      int index = 0;
+      private int index = 0;
+
       @Override
       public WithIndex<T> apply(T t) {
         return new WithIndex<>(index++, t);

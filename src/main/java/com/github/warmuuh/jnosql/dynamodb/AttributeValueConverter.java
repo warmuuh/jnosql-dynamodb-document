@@ -3,10 +3,13 @@ package com.github.warmuuh.jnosql.dynamodb;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.experimental.UtilityClass;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 public class AttributeValueConverter {
+
+  private AttributeValueConverter() {
+
+  }
 
   static Object toObject(AttributeValue value) {
     if (Boolean.TRUE.equals(value.nul())) {
@@ -50,7 +53,7 @@ public class AttributeValueConverter {
     }
 
     if (value instanceof String) {
-      return AttributeValue.fromS((String)value);
+      return AttributeValue.fromS((String) value);
     }
 
     if (value instanceof Number) {
@@ -62,10 +65,10 @@ public class AttributeValueConverter {
 //    }
 
     if (value instanceof List<?>) {
-      return AttributeValue.fromL(((List<?>)value).stream().map(AttributeValueConverter::fromObject).toList());
+      return AttributeValue.fromL(((List<?>) value).stream().map(AttributeValueConverter::fromObject).toList());
     }
     if (value instanceof Map<?, ?>) {
-      return AttributeValue.fromM(((Map<?, ?>)value).entrySet().stream().collect(Collectors.toMap(
+      return AttributeValue.fromM(((Map<?, ?>) value).entrySet().stream().collect(Collectors.toMap(
           e -> e.getKey().toString(),
           e -> fromObject(e.getValue())
       )));
@@ -79,5 +82,4 @@ public class AttributeValueConverter {
 
     throw new IllegalArgumentException("Cannot convert value of type " + value.getClass() + " to dynamodb type");
   }
-
 }

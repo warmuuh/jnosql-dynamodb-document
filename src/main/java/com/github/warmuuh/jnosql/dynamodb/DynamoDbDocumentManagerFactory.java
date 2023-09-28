@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.eclipse.jnosql.communication.Settings;
 import org.eclipse.jnosql.communication.document.DocumentManager;
 import org.eclipse.jnosql.communication.document.DocumentManagerFactory;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @RequiredArgsConstructor
