@@ -45,9 +45,8 @@ Please note that you can establish properties using the [MicroProfile Config](ht
 
 This is an example using DynamoDB's Document API with MicroProfile Config.
 
-[source,properties]
-----
+```properties
 jnosql.document.provider: com.github.warmuuh.jnosql.dynamodb.DynamoDBDocumentConfiguration
 jnosql.dynamodb.region: eu-central-1
 jnosql.dynamodb.profile: my_profile
-----
+```
