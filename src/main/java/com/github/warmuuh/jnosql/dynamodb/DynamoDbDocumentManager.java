@@ -38,6 +38,7 @@ public class DynamoDbDocumentManager implements DocumentManager {
 
   private final DynamoDbClient client;
   private final String tablePrefix;
+  private final SelectStrategy selectStrategy;
 
   @Override
   public String name() {
@@ -131,33 +132,10 @@ public class DynamoDbDocumentManager implements DocumentManager {
 
   @Override
   public Stream<DocumentEntity> select(DocumentQuery qry) {
-    DocumentCondition condition = qry.condition()
-        .orElseThrow(() -> new IllegalStateException("Cant scan all for dynamodb. needs where clause"));
-
     TableDescription table = getTableDescription(qry.name());
-    ConditionSets result = getConditionSets(table, condition);
+    Stream<Map<String, AttributeValue>> items =selectStrategy.execute(client, table, qry);
 
-    Builder qryBuilder = QueryRequest.builder()
-        .tableName(table.tableName())
-        .keyConditions(result.keyConditions())
-        .queryFilter(result.filterConditions());
-
-    if (qry.limit() > 0) {
-      qryBuilder.limit((int) qry.limit());
-    }
-
-    if (qry.documents().size() > 0) {
-      qryBuilder.attributesToGet(qry.documents());
-    }
-
-    QueryResponse response = client.query(qryBuilder.build());
-
-    if (!response.hasItems()) {
-      return Stream.empty();
-    }
-
-    List<Map<String, AttributeValue>> items = response.items();
-    return items.stream()
+    return items
         .map(WithIndex.indexed())
         .map(itemWithIndex -> {
           var item = itemWithIndex.value();
@@ -184,20 +162,7 @@ public class DynamoDbDocumentManager implements DocumentManager {
     return table;
   }
 
-  private static ConditionSets getConditionSets(TableDescription table, DocumentCondition condition) {
-    Map<String, Condition> conditions = DynamoDbConditionMapper.mapCondition(condition);
 
-    List<String> keyAttributeNames = table.keySchema().stream().map(e -> e.attributeName()).toList();
-    Map<String, Condition> keyConditions = new HashMap<>();
-    conditions.forEach((k, v) -> {
-      if (keyAttributeNames.contains(k)) {
-        keyConditions.put(k, v);
-      }
-    });
-    keyConditions.forEach((k, v) -> conditions.remove(k));
-    ConditionSets result = new ConditionSets(conditions, keyConditions);
-    return result;
-  }
 
   private static Map<String, AttributeValue> getKey(TableDescription table, DocumentCondition condition) {
     Map<String, Condition> conditions = DynamoDbConditionMapper.mapCondition(condition);
@@ -218,9 +183,7 @@ public class DynamoDbDocumentManager implements DocumentManager {
     return key;
   }
 
-  private record ConditionSets(Map<String, Condition> filterConditions, Map<String, Condition> keyConditions) {
 
-  }
 
   @Override
   public long count(String tableName) {
