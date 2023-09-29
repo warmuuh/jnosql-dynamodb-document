@@ -23,6 +23,7 @@
     <maven.compiler.target>17</maven.compiler.target>
     <jnosql.version>1.0.1</jnosql.version>
     <aws.sdk.version>2.20.98</aws.sdk.version>
+    <rat.skip>true</rat.skip>
   </properties>
 
   <dependencies>
